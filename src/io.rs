@@ -23,51 +23,6 @@ pub mod io {
             }
         }
 
-        /**
-         Private function to get input from the standard
-         input
-        */
-        fn consume_stdin(&mut self) -> Option<String> {
-            use std::io::{stdin, stdout, Write};
-            let _ = stdout().flush();
-            match stdin().read_line(&mut self.buf) {
-                Ok(_) => Some(self.trim_to_owned(&self.buf)),
-                Err(why) => panic!("{}", why),
-            }
-        }
-
-        /**
-         Find the next delimiter or newline in the buffer
-        */
-        fn next_split(&self) -> usize {
-            let ind_of_delim: usize = self.buf.find(self.delim).unwrap_or(self.buf.len());
-
-            if !self.ignore_endl {
-                ind_of_delim.min(self.next_endl())
-            } else {
-                ind_of_delim
-            }
-        }
-
-        /**
-         Take a `&str`, trim it according to the delimiter,
-         and return it as an owned value
-        */
-        fn trim_to_owned(&self, s: &str) -> String {
-            if self.delim == ' ' {
-                s.trim().to_owned()
-            } else {
-                s.replace(self.delim, "")
-            }
-        }
-
-        /**
-         Find the next occurrence of a newline in the buffer
-        */
-        fn next_endl(&self) -> usize {
-            self.buf.find('\n').unwrap_or(self.buf.len())
-        }
-
         pub fn ignore_endl(&mut self, ignore: bool) {
             self.ignore_endl = ignore;
         }
@@ -170,6 +125,51 @@ pub mod io {
 
         pub fn use_delim(&mut self, delim: char) {
             self.delim = delim;
+        }
+
+        /**
+         Private function to get input from the standard
+         input
+        */
+        fn consume_stdin(&mut self) -> Option<String> {
+            use std::io::{stdin, stdout, Write};
+            let _ = stdout().flush();
+            match stdin().read_line(&mut self.buf) {
+                Ok(_) => Some(self.trim_to_owned(&self.buf)),
+                Err(why) => panic!("{}", why),
+            }
+        }
+
+        /**
+         Find the next delimiter or newline in the buffer
+        */
+        fn next_split(&self) -> usize {
+            let ind_of_delim: usize = self.buf.find(self.delim).unwrap_or(self.buf.len());
+
+            if !self.ignore_endl {
+                ind_of_delim.min(self.next_endl())
+            } else {
+                ind_of_delim
+            }
+        }
+
+        /**
+         Take a `&str`, trim it according to the delimiter,
+         and return it as an owned value
+        */
+        fn trim_to_owned(&self, s: &str) -> String {
+            if self.delim == ' ' {
+                s.trim().to_owned()
+            } else {
+                s.replace(self.delim, "")
+            }
+        }
+
+        /**
+         Find the next occurrence of a newline in the buffer
+        */
+        fn next_endl(&self) -> usize {
+            self.buf.find('\n').unwrap_or(self.buf.len())
         }
     }
 
